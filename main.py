@@ -1,16 +1,21 @@
 from kivymd.app import MDApp
+# from kivymd.uix.list import IRightBodyTouch
+# from kivymd.uix.label import MDLabel
+# from kivymd.uix.selectioncontrol import MDCheckbox
 
 from kivy.logger import Logger
 from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.uix.screenmanager import Screen
 
+# from widgets.options import *
+
 
 class Display(Screen):
     received = StringProperty()
 
     def receive_data(self, data):
-        Logger.info('CustomLog: Data received by the Screen')
+        Logger.info('ServerUI: Data received by the Screen')
         self.received = data
 
 
@@ -18,9 +23,13 @@ class OptionPanel(Screen):
     pass
 
 
+# class AddressLabel(IRightBodyTouch, MDLabel):
+#     pass
+
+
 class ServerUI(MDApp):
-    port = None
     server = None
+    ip_address = (None, None)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -32,23 +41,22 @@ class ServerUI(MDApp):
     def on_stop(self):
         if self.server:
             self.server.shutdown()
-            Logger.info('CustomLog: Server has been shut down.')
+            Logger.info('ServerUI: Server has been shut down.')
 
     def set_server_reference(self, server, ip, port):
-        self.ip_address = (ip, port)
-        # self.port = port
         self.server = server
+        self.ip_address = (ip, port)
 
-        Logger.info('CustomLog: Server is running.')
-        Logger.info('CustomLog: Server port is {1}. Try {0}:{1}'.format(ip, port))
+        Logger.info('ServerUI: Server is running.')
+        Logger.info('ServerUI: Server port is {1}. Try {0}:{1}'.format(ip, port))
 
     def server_callback(self, method, data):
         if method.upper() not in ('GET', 'POST'):
-            Logger.warning(f'CustomLog: Method received by app server callback is not recognized! [method = {method}]')
+            Logger.warning(f'ServerUI: Method received by app server callback is not recognized! [method = {method}]')
             return
 
         if method.upper() == 'GET':
-            Logger.info('CustomLog: GET request received.')
+            Logger.info('ServerUI: GET request received.')
 
             try:
                 print('GET callback (not implemented!): ', data)
@@ -56,7 +64,7 @@ class ServerUI(MDApp):
                 pass
 
         elif method.upper() == 'POST':
-            Logger.info('CustomLog: POST request received.')
+            Logger.info('ServerUI: POST request received.')
 
             received: str
             if type(data) == str:
@@ -68,11 +76,11 @@ class ServerUI(MDApp):
 
 
 if __name__ == '__main__':
-    if False:  # Enable to debug the UI
+    if True:  # Enable to debug the UI
         instance = ServerUI()
         instance.run()
     else:
-        Logger.error('CustomLog: Please do not run the server from here.')
+        Logger.error('ServerUI: Please do not run the server from here.')
 
         # from server import run
         # run()
