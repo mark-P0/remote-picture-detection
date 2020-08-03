@@ -1,6 +1,6 @@
 from kivymd.app import MDApp
 
-# from kivy.logger import Logger
+from kivy.logger import Logger
 from kivy.clock import Clock
 from kivy.properties import ObjectProperty
 from kivy.core.window import Window
@@ -41,9 +41,12 @@ class Display(Screen):
 
         try:
             req = post_request(message=message)
+
+            Logger.info('ClientUI: Sending success')
             content = req.content.decode('UTF-8')
             Clock.schedule_once(lambda *args: self.set_helper('success', content), 0.25)
         except Exception as e:
+            Logger.error(f'ClientUI: An exception has occurred. {e}')
             Clock.schedule_once(lambda dt, e=e: self.set_helper('fail', e), 0.25)
 
     def set_helper(self, type_, message):  # Putang inang helper color yan ekis kapag success e :(
@@ -55,7 +58,6 @@ class Display(Screen):
             self.text_field._current_error_color = get_color_from_hex('#00C851')
 
         if type_ == 'fail':
-            print(message)  # Do something with error?
             self.text_field.helper_text = 'Message was not sent.'
             self.text_field._current_error_color = get_color_from_hex('#ff4444')
 

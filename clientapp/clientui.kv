@@ -1,18 +1,26 @@
-ScreenManager:
-    Display:
-        name: 'scr2'
+# ScreenManager:
+#     Display:
+#         name: 'scr2'
+
+#     Options:
+#         name: 'scr1'
+
+Carousel:
+    index: 1
+    anim_move_duration: 0.25
 
     Options:
-        name: 'scr1'
+
+    Display:
 
 
 <Options>:
-    MDIconButton:
-        pos_hint: {'right': 1, 'top': 1}
-        icon: 'chevron-double-right'
-        on_release:
-            root.manager.transition.direction = 'left'
-            root.manager.current = 'scr2'
+    # MDIconButton:
+    #     pos_hint: {'right': 1, 'top': 1}
+    #     icon: 'chevron-double-right'
+    #     on_release:
+    #         root.manager.transition.direction = 'left'
+    #         root.manager.current = 'scr2'
 
     MDLabel:
         text: '*options here*'
@@ -24,12 +32,12 @@ ScreenManager:
     text_field: prompt
     indicator: loading
 
-    MDIconButton:
-        pos_hint: {'top': 1}
-        icon: 'chevron-double-left'
-        on_release:
-            root.manager.transition.direction = 'right'
-            root.manager.current = 'scr1'
+    # MDIconButton:
+    #     pos_hint: {'top': 1}
+    #     icon: 'chevron-double-left'
+    #     on_release:
+    #         root.manager.transition.direction = 'right'
+    #         root.manager.current = 'scr1'
 
     MDBoxLayout:
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
