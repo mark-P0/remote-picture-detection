@@ -1,0 +1,67 @@
+ScreenManager:
+    Display:
+        name: 'scr2'
+
+    OptionPanel:
+        name: 'scr1'
+
+
+<OptionPanel>:
+    MDIconButton:
+        pos_hint: {'right': 1, 'top': 1}
+        icon: 'chevron-double-right'
+        on_release:
+            root.manager.transition.direction = 'left'
+            root.manager.current = 'scr2'
+    
+    MDLabel:
+        text: '*options here*'
+        halign: 'center'
+
+
+<Display>:
+    MDIconButton:
+        pos_hint: {'top': 1}
+        icon: 'chevron-double-left'
+        on_release:
+            root.manager.transition.direction = 'right'
+            root.manager.current = 'scr1'
+
+    MDBoxLayout:
+        orientation: 'horizontal'
+        padding: '100dp', '150dp', '100dp', '100dp'
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: '10dp'
+            md_bg_color: 1, 0, 0, 0.25
+
+            Image:
+                # canvas.after:
+                #     Color:
+                #         rgba: 0, 0, 0, 0.25
+                #     Rectangle:
+                #         pos: self.pos
+                #         size: self.size
+
+                source: 'images/blank.jpg'
+
+            MDLabel:
+                text: '*match pic*'
+                halign: 'center'
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            padding: '10dp'
+            md_bg_color: 0, 0, 1, 0.25
+
+            Image:
+                source: 'images/blank.jpg'
+            
+            MDLabel:
+                # text: '*input pic*'
+                text: root.received
+                halign: 'center'
+
+
+

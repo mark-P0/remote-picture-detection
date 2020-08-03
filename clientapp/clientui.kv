@@ -1,0 +1,67 @@
+ScreenManager:
+    Display:
+        name: 'scr2'
+
+    Options:
+        name: 'scr1'
+
+
+<Options>:
+    MDIconButton:
+        pos_hint: {'right': 1, 'top': 1}
+        icon: 'chevron-double-right'
+        on_release:
+            root.manager.transition.direction = 'left'
+            root.manager.current = 'scr2'
+
+    MDLabel:
+        text: '*options here*'
+        halign: 'center'
+
+
+<Display>:
+    send_button: send
+    text_field: prompt
+    indicator: loading
+
+    MDIconButton:
+        pos_hint: {'top': 1}
+        icon: 'chevron-double-left'
+        on_release:
+            root.manager.transition.direction = 'right'
+            root.manager.current = 'scr1'
+
+    MDBoxLayout:
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        size_hint_x: 0.8
+        orientation: 'vertical'
+
+        adaptive_height: True
+        # md_bg_color: 0, 0, 0, 0.25  
+
+        MDTextField:
+            id: prompt
+            multiline: True
+            hint_text: 'Message to server'
+            helper_text_mode: 'persistent'
+            helper_text: ''
+
+            on_focus:
+                self.helper_text = ''
+        
+        MDRaisedButton:
+            id: send
+            pos_hint: {'right': 1}
+            # markup: True
+            text: 'Send'
+            
+            on_release:
+                root.send_button_callback()
+
+    MDSpinner:
+        id: loading
+        pos_hint: {'center_x': 0.5, 'center_y': 0.25}
+        size_hint: None, None
+        size: '48dp', '48dp'
+        active: False
+
