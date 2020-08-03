@@ -76,11 +76,11 @@ class ServerUI(MDApp):
 
 
 if __name__ == '__main__':
-    if True:  # Enable to debug the UI
+    if False:  # Enable to debug the UI
+        Logger.error('ServerUI: Server itself will not start, only the interface!')
         instance = ServerUI()
         instance.run()
     else:
-        Logger.error('ServerUI: Please do not run the server from here.')
-
-        # from server import run
-        # run()
+        Logger.error('ServerUI: Server is not meant to be started from here.')
+        from server import run
+        run()
