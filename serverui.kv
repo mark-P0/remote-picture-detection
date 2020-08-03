@@ -1,6 +1,6 @@
 ScreenManager:
-    Display:
-        name: 'scr2'
+    # Display:
+    #     name: 'scr2'
 
     OptionPanel:
         name: 'scr1'
@@ -14,36 +14,44 @@ ScreenManager:
             root.manager.transition.direction = 'left'
             root.manager.current = 'scr2'
     
-    # MDLabel:
-    #     text: '*options here*'
-    #     halign: 'center'
     MDBoxLayout:
         orientation: 'vertical'
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         size_hint_x: 0.8
+        padding: '12dp', 0
 
         adaptive_height: True
         md_bg_color: 0, 0, 0, 0.1
 
-        MDBoxLayout:
-            size_hint_y: None
-            height: '48dp'
-            padding: '24dp', 0
-
+        OptionItem:
+            label_text: 'Server address'
+            label_theme: 'Hint'
             MDLabel:
-                # size_hint_y: None
-                # height: self.texture_size[1]
-                text: 'Server address'
-
-            MDLabel:
-                # size_hint_y: None
-                # height: self.texture_size[1]
                 text: '{}:{}'.format(*app.ip_address)
                 halign: 'right'
                 theme_text_color: 'Hint'
+        
+        MDSeparator:
 
-# <AddressLabel>:
-#     text: 'Hi'
+        OptionItem:
+            label_text: 'Toggle server'
+            MDSwitch:
+                active: app.server_is_live
+                on_active:
+                    app.toggle_server(status=self.active)
+
+
+<OptionItem@MDBoxLayout>:
+    label_text: ''
+    label_theme: None
+
+    size_hint_y: None
+    height: '48dp'
+    padding: '24dp', 0
+
+    MDLabel:
+        text: root.label_text
+        theme_text_color: root.label_theme if root.label_theme is not None else 'Primary'
 
 
 <Display>:

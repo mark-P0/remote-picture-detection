@@ -9,6 +9,8 @@ import threading
 
 
 class CustomHandler(BaseHTTPRequestHandler):
+    ui = None
+
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
 
@@ -104,7 +106,7 @@ def get_IP():
         return name[0]
 
 
-def run():
+def initialize_server():
     IP = get_IP()
 
     from random import randint
@@ -120,13 +122,22 @@ def run():
     thread.daemon = True
     thread.start()
 
-    from main import ServerUI
-    CustomHandler._initialize_ui(
-        ui_class=ServerUI,
-        server=httpd,
-        ip=IP,
-        port=PORT,
-    )
+    return httpd, IP, PORT
+
+
+def run():
+    http_server, ip, port = initialize_server()
+
+    if CustomHandler.ui is None:
+        from main import ServerUI
+        CustomHandler._initialize_ui(
+            ui_class=ServerUI,
+            server=http_server,
+            ip=ip,
+            port=port,
+        )
+    else:
+        CustomHandler.ui.set_server_reference(http_server, ip, port)
 
 
 if __name__ == '__main__':

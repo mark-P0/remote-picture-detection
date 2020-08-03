@@ -1,13 +1,12 @@
 from kivymd.app import MDApp
-# from kivymd.uix.list import IRightBodyTouch
-# from kivymd.uix.label import MDLabel
-# from kivymd.uix.selectioncontrol import MDCheckbox
 
 from kivy.logger import Logger
 from kivy.clock import Clock
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, BooleanProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
+import threading
+from server import run as run_server
 # from widgets.options import *
 
 
@@ -23,13 +22,11 @@ class OptionPanel(Screen):
     pass
 
 
-# class AddressLabel(IRightBodyTouch, MDLabel):
-#     pass
-
-
 class ServerUI(MDApp):
     server = None
-    ip_address = (None, None)
+    ip_address = ListProperty([None, None])
+
+    server_is_live = BooleanProperty(False)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -43,12 +40,26 @@ class ServerUI(MDApp):
             self.server.shutdown()
             Logger.info('ServerUI: Server has been shut down.')
 
+    def toggle_server(self, status):
+        if status is True and self.server is None:
+            Logger.info('ServerUI: Server is toggled on.')
+
+            run_server()
+        else:
+            Logger.info('ServerUI: Server is toggled off.')
+
+            thread = threading.Thread(target=self.server.shutdown)
+            thread.start()
+
+            self.server = None
+            self.ip_address = [None, None]
+
     def set_server_reference(self, server, ip, port):
         self.server = server
         self.ip_address = (ip, port)
+        self.server_is_live = True
 
-        Logger.info('ServerUI: Server is running.')
-        Logger.info('ServerUI: Server port is {1}. Try {0}:{1}'.format(ip, port))
+        Logger.info('ServerUI: Server is live at {}:{}'.format(ip, port))
 
     def server_callback(self, method, data):
         if method.upper() not in ('GET', 'POST'):
@@ -82,5 +93,4 @@ if __name__ == '__main__':
         instance.run()
     else:
         Logger.error('ServerUI: Server is not meant to be started from here.')
-        from server import run
-        run()
+        run_server()
