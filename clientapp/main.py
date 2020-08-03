@@ -44,20 +44,17 @@ class Display(Screen):
 
             Logger.info('ClientUI: Sending success')
             content = req.content.decode('UTF-8')
-            Clock.schedule_once(lambda *args: self.set_helper('success', content), 0.25)
+            Clock.schedule_once(lambda *args: self.set_helper(is_success=True, message=content), 0.25)
         except Exception as e:
             Logger.error(f'ClientUI: An exception has occurred. {e}')
-            Clock.schedule_once(lambda dt, e=e: self.set_helper('fail', e), 0.25)
+            Clock.schedule_once(lambda dt, e=e: self.set_helper(), 0.25)
 
-    def set_helper(self, type_, message):  # Putang inang helper color yan ekis kapag success e :(
-        if type_ not in ('success', 'fail'):
-            return
-
-        if type_ == 'success':
+    def set_helper(self, is_success=False, message=None):  # Putang inang helper color yan ekis kapag success e :(
+        if is_success:  # Message successfully sent
             self.text_field.helper_text = message
             self.text_field._current_error_color = get_color_from_hex('#00C851')
 
-        if type_ == 'fail':
+        else:  # Not sent
             self.text_field.helper_text = 'Message was not sent.'
             self.text_field._current_error_color = get_color_from_hex('#ff4444')
 
