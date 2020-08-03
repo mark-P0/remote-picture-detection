@@ -26,6 +26,7 @@ ScreenManager:
         OptionItem:
             label_text: 'Server address'
             label_theme: 'Hint'
+            italicize: True
             MDLabel:
                 text: '{}:{}'.format(*app.ip_address)
                 halign: 'right'
@@ -44,6 +45,7 @@ ScreenManager:
 <OptionItem@MDBoxLayout>:
     label_text: ''
     label_theme: None
+    italicize: False
 
     size_hint_y: None
     height: '48dp'
@@ -52,6 +54,7 @@ ScreenManager:
     MDLabel:
         text: root.label_text
         theme_text_color: root.label_theme if root.label_theme is not None else 'Primary'
+        italic: root.italicize
 
 
 <Display>:

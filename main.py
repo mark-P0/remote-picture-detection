@@ -38,15 +38,15 @@ class ServerUI(MDApp):
     def on_stop(self):
         if self.server:
             self.server.shutdown()
-            Logger.info('ServerUI: Server has been shut down.')
+            Logger.info('ServerUI: Server has been shut down')
 
     def toggle_server(self, status):
         if status is True and self.server is None:
-            Logger.info('ServerUI: Server is toggled on.')
+            Logger.info('ServerUI: Server is toggled on')
 
             run_server()
         else:
-            Logger.info('ServerUI: Server is toggled off.')
+            Logger.info('ServerUI: Server is toggled off')
 
             thread = threading.Thread(target=self.server.shutdown)
             thread.start()
@@ -67,15 +67,15 @@ class ServerUI(MDApp):
             return
 
         if method.upper() == 'GET':
-            Logger.info('ServerUI: GET request received.')
+            Logger.info('ServerUI: GET request received')
 
             try:
                 print('GET callback (not implemented!): ', data)
             except:  # noqa: E722
-                pass
+                print('Printing of GET data failed!')
 
         elif method.upper() == 'POST':
-            Logger.info('ServerUI: POST request received.')
+            Logger.info('ServerUI: POST request received')
 
             received: str
             if type(data) == str:
@@ -87,10 +87,10 @@ class ServerUI(MDApp):
 
 
 if __name__ == '__main__':
-    if False:  # Enable to debug the UI
+    if False:  # Enable to debug the UI only
         Logger.error('ServerUI: Server itself will not start, only the interface!')
         instance = ServerUI()
         instance.run()
     else:
-        Logger.error('ServerUI: Server is not meant to be started from here.')
+        Logger.error('ServerUI: Server is not meant to be started from here')
         run_server()
