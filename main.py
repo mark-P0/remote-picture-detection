@@ -17,6 +17,9 @@ class Display(Screen):
         Logger.info('ServerUI: Data received by the Screen')
         self.received = data
 
+        self.manager.transition.direction = 'left'
+        self.manager.current = self.name
+
 
 class OptionPanel(Screen):
     pass
@@ -93,4 +96,4 @@ if __name__ == '__main__':
         instance.run()
     else:
         Logger.error('ServerUI: Server is not meant to be started from here')
-        run_server()
+        # run_server()

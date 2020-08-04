@@ -18,7 +18,7 @@ Carousel:
 
 <Options>:
     # save_button: save
-    
+
     MDIconButton:
         pos_hint: {'right': 1, 'top': 1}
         icon: 'chevron-double-right'
@@ -43,20 +43,24 @@ Carousel:
 
         MDTextField:
             hint_text: 'IP Address'
+            text: app.ip_address[0]
             helper_text_mode: 'on_error'
             helper_text: 'IP address is not valid.'
             max_text_length: 15
             on_text:
+                app.ip_address[0] = self.text
                 root.validate_field(self)
-        
+
         MDTextField:
             hint_text: 'Port'
+            text: app.ip_address[1]
             helper_text_mode: 'on_error'
             helper_text: 'Port number is not valid.'
             max_text_length: 5
             on_text:
+                app.ip_address[1] = self.text
                 root.validate_field(self)
-        
+
         # MDRaisedButton:
         #     id: save
         #     pos_hint: {'right': 1}
@@ -86,6 +90,8 @@ Carousel:
     text_field: prompt
     indicator: loading
 
+    address: app.ip_address
+
     MDIconButton:
         pos_hint: {'top': 1}
         icon: 'chevron-double-left'
@@ -99,26 +105,27 @@ Carousel:
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
         size_hint_x: 0.8
         orientation: 'vertical'
+        spacing: '6dp'
 
         adaptive_height: True
-        # md_bg_color: 0, 0, 0, 0.25  
+        # md_bg_color: 0, 0, 0, 0.25
 
         MDTextField:
             id: prompt
             multiline: True
             hint_text: 'Message to server'
             helper_text_mode: 'persistent'
-            helper_text: ''
+            helper_text: 'Try sending a message to the live server!'
 
             on_focus:
                 self.helper_text = ''
-        
+
         MDRaisedButton:
             id: send
             pos_hint: {'right': 1}
             # markup: True
             text: 'Send'
-            
+
             on_release:
                 root.send_button_callback()
 
@@ -128,4 +135,3 @@ Carousel:
         size_hint: None, None
         size: '48dp', '48dp'
         active: False
-

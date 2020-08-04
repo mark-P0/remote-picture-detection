@@ -2,7 +2,7 @@ from kivymd.app import MDApp
 
 from kivy.logger import Logger
 from kivy.clock import Clock
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty, ListProperty
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 from kivy.uix.screenmanager import Screen
@@ -16,6 +16,8 @@ class Display(Screen):
     send_button = ObjectProperty()
     text_field = ObjectProperty()
     indicator = ObjectProperty()
+
+    address = ListProperty()
 
     request_thread: threading.Thread
 
@@ -41,7 +43,10 @@ class Display(Screen):
         message = self.text_field.text
 
         try:
-            req = post_request(message=message)
+            req = post_request(
+                address=f'http://{self.address[0]}:{self.address[1]}',
+                message=message,
+            )
 
             Logger.info('ClientUI: Sending success')
             content = req.content.decode('UTF-8')
@@ -56,7 +61,7 @@ class Display(Screen):
             self.text_field._current_error_color = get_color_from_hex('#00C851')
 
         else:  # Not sent
-            self.text_field.helper_text = 'Message was not sent. Is the server address correct?'
+            self.text_field.helper_text = 'Message was not sent.'
             self.text_field._current_error_color = get_color_from_hex('#ff4444')
 
         self.indicator.active = False
@@ -64,17 +69,6 @@ class Display(Screen):
 
 class Options(Screen):
     parent_carousel = ObjectProperty()
-    # save_button = ObjectProperty()
-
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
-    #     Clock.schedule_once(self.deferred)
-
-    # def deferred(self, *args):
-    #     self.widget_initializations()
-
-    # def widget_initializations(self):
-    #     self.save_button.ids['lbl_txt'].font_style = 'Button'
 
     def validate_field(self, field):
         if field.hint_text.lower() == 'ip address':
@@ -107,7 +101,6 @@ class Options(Screen):
         else:
             return  # You're not even supposed to be here! lulz
 
-        print(error_conditions)
         if any(error_conditions) or field.text == '':
             field.error = True
 
@@ -124,7 +117,7 @@ class Options(Screen):
 
 
 class ClientUI(MDApp):
-    port = None
+    ip_address = ListProperty(['192.168.254.108', '8888'])
     server = None
 
     # def __init__(self, **kwargs):
