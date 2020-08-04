@@ -1,13 +1,28 @@
 from kivymd.app import MDApp
 
 from kivy.logger import Logger
-from kivy.clock import Clock
+# from kivy.clock import Clock
 from kivy.properties import StringProperty, BooleanProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
 import threading
-from server import run as run_server
+# from server import run as run_server
+from server import open_server
 # from widgets.options import *
+
+import sys
+import os
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 class Display(Screen):
@@ -31,23 +46,32 @@ class ServerUI(MDApp):
 
     server_is_live = BooleanProperty(False)
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        Clock.schedule_once(self.deferred)
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     Clock.schedule_once(self.deferred)
 
-    def deferred(self, *args):
-        pass
+    # def deferred(self, *args):
+    #     pass
+
+    def create_server_reference(self):
+        server, ip, port = open_server(ui=self)
+        self.server = server
+        self.ip_address = (ip, port)
+        self.server_is_live = True
+
+        Logger.info('ServerUI: Live at {}:{}'.format(ip, port))
 
     def on_stop(self):
         if self.server:
             self.server.shutdown()
-            Logger.info('ServerUI: Server has been shut down')
+
+        Logger.info('ServerUI: Server has been shut down')
 
     def toggle_server(self, status):
         if status is True and self.server is None:
             Logger.info('ServerUI: Server is toggled on')
 
-            run_server()
+            self.create_server_reference()
         else:
             Logger.info('ServerUI: Server is toggled off')
 
@@ -56,13 +80,7 @@ class ServerUI(MDApp):
 
             self.server = None
             self.ip_address = [None, None]
-
-    def set_server_reference(self, server, ip, port):
-        self.server = server
-        self.ip_address = (ip, port)
-        self.server_is_live = True
-
-        Logger.info('ServerUI: Server is live at {}:{}'.format(ip, port))
+            self.server_is_live = False
 
     def server_callback(self, method, data):
         if method.upper() not in ('GET', 'POST'):
@@ -90,10 +108,10 @@ class ServerUI(MDApp):
 
 
 if __name__ == '__main__':
-    if False:  # Enable to debug the UI only
-        Logger.error('ServerUI: Server itself will not start, only the interface!')
-        instance = ServerUI()
-        instance.run()
-    else:
-        Logger.error('ServerUI: Server is not meant to be started from here')
-        # run_server()
+    ui_instance = ServerUI()
+
+    # server, ip, port = initialize_server(ui_instance)
+    # ui_instance.set_server_reference(server, ip, port)
+    ui_instance.create_server_reference()
+
+    ui_instance.run()

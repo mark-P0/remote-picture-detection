@@ -85,14 +85,8 @@ class CustomHandler(BaseHTTPRequestHandler):
             if success:
                 self.wfile.write('POST request received successfully.'.encode('UTF-8'))
 
-    def _get_server_address(self):
-        return '{}:{}'.format(self.address_string(), self.server.server_port)
-
-    @staticmethod
-    def _initialize_ui(ui_class, server, ip, port):
-        CustomHandler.ui = ui_class()
-        CustomHandler.ui.set_server_reference(server, ip, port)
-        CustomHandler.ui.run()
+    # def _get_server_address(self):
+    #     return '{}:{}'.format(self.address_string(), self.server.server_port)
 
 
 def get_IP():
@@ -106,39 +100,27 @@ def get_IP():
         return name[0]
 
 
-def initialize_server():
-    IP = get_IP()
+def open_server(ui):
+    persist = True
+    while persist:
+        try:
+            IP = get_IP()
 
-    from random import randint
-    PORT = randint(0, 65535)
-    # PORT = 58029
-    # PORT = 8000
+            from random import randint
+            PORT = randint(0, 65535)
+            # PORT = 58029
+            # PORT = 8000
 
-    server_address = (IP, PORT)
-    httpd = HTTPServer(server_address, CustomHandler)
+            server_address = (IP, PORT)  # Random port number generated might already be in use lol
+            httpd = HTTPServer(server_address, CustomHandler)
+            CustomHandler.ui = ui
 
-    # httpd.serve_forever()
-    thread = threading.Thread(target=httpd.serve_forever)
-    thread.daemon = True
-    thread.start()
+            # httpd.serve_forever()
+            thread = threading.Thread(target=httpd.serve_forever)
+            thread.daemon = True
+            thread.start()
 
-    return httpd, IP, PORT
-
-
-def run():
-    http_server, ip, port = initialize_server()
-
-    if CustomHandler.ui is None:
-        from main import ServerUI
-        CustomHandler._initialize_ui(
-            ui_class=ServerUI,
-            server=http_server,
-            ip=ip,
-            port=port,
-        )
-    else:
-        CustomHandler.ui.set_server_reference(http_server, ip, port)
-
-
-if __name__ == '__main__':
-    run()
+            persist = False
+            return httpd, IP, PORT
+        except Exception:
+            pass
