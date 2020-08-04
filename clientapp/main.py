@@ -12,6 +12,7 @@ from scripts.core import post_request
 
 
 class Display(Screen):
+    parent_carousel = ObjectProperty()
     send_button = ObjectProperty()
     text_field = ObjectProperty()
     indicator = ObjectProperty()
@@ -23,9 +24,9 @@ class Display(Screen):
         Clock.schedule_once(self.deferred)
 
     def deferred(self, *args):
-        self.element_setup()
+        self.widget_initializations()
 
-    def element_setup(self):
+    def widget_initializations(self):
         self.send_button.ids['lbl_txt'].font_style = 'Button'
 
     def send_button_callback(self):
@@ -55,14 +56,71 @@ class Display(Screen):
             self.text_field._current_error_color = get_color_from_hex('#00C851')
 
         else:  # Not sent
-            self.text_field.helper_text = 'Message was not sent.'
+            self.text_field.helper_text = 'Message was not sent. Is the server address correct?'
             self.text_field._current_error_color = get_color_from_hex('#ff4444')
 
         self.indicator.active = False
 
 
 class Options(Screen):
-    pass
+    parent_carousel = ObjectProperty()
+    # save_button = ObjectProperty()
+
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     Clock.schedule_once(self.deferred)
+
+    # def deferred(self, *args):
+    #     self.widget_initializations()
+
+    # def widget_initializations(self):
+    #     self.save_button.ids['lbl_txt'].font_style = 'Button'
+
+    def validate_field(self, field):
+        if field.hint_text.lower() == 'ip address':
+            portions = field.text.split('.')
+            error_conditions = (
+                len(portions) != 4,
+                # not all([portion.isdigit() for portion in portions]) or
+                # not all([int(portion) <= 255 for portion in portions])
+                not all(
+                    [portion.isdigit() and int(portion) <= 255 for portion in portions]
+                )
+            )
+
+        elif field.hint_text.lower() == 'port':
+            port_is_digit = field.text.isdigit()
+
+            MAX_PORT = 65535
+            MIN_PORT = 0
+            if port_is_digit:
+                if int(field.text) > MAX_PORT:
+                    field.text = f'{MAX_PORT}'
+                if int(field.text) < MIN_PORT:  # Not working? Negative sign is considered as string
+                    field.text = f'{MIN_PORT}'
+
+            error_conditions = (
+                not port_is_digit,
+                not (MIN_PORT <= int(field.text) <= MAX_PORT) if port_is_digit else False
+            )
+
+        else:
+            return  # You're not even supposed to be here! lulz
+
+        print(error_conditions)
+        if any(error_conditions) or field.text == '':
+            field.error = True
+
+            if not field.focus:
+                field.focus = True
+                field.focus = False
+
+            if self.parent_carousel.current_slide != self:
+                self.parent_carousel.load_slide(self)
+        else:
+            field.error = False
+
+        field.on_text(field, field.text)
 
 
 class ClientUI(MDApp):
@@ -76,8 +134,8 @@ class ClientUI(MDApp):
     # def deferred(self, *args):
     #     pass
 
-    def on_stop(self):
-        pass
+    # def on_stop(self):
+    #     pass
 
 
 if __name__ == '__main__':

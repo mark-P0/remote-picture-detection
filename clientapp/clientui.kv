@@ -17,6 +17,8 @@ Carousel:
 
 
 <Options>:
+    # save_button: save
+    
     MDIconButton:
         pos_hint: {'right': 1, 'top': 1}
         icon: 'chevron-double-right'
@@ -26,9 +28,57 @@ Carousel:
 
             root.parent_carousel.load_next()
 
+    # MDLabel:
+    #     text: '*options here*'
+    #     halign: 'center'
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        size_hint_x: 0.8
+        padding: '12dp', '6dp'
+
+        adaptive_height: True
+        md_bg_color: 0, 0, 0, 0.1
+
+        MDTextField:
+            hint_text: 'IP Address'
+            helper_text_mode: 'on_error'
+            helper_text: 'IP address is not valid.'
+            max_text_length: 15
+            on_text:
+                root.validate_field(self)
+        
+        MDTextField:
+            hint_text: 'Port'
+            helper_text_mode: 'on_error'
+            helper_text: 'Port number is not valid.'
+            max_text_length: 5
+            on_text:
+                root.validate_field(self)
+        
+        # MDRaisedButton:
+        #     id: save
+        #     pos_hint: {'right': 1}
+        #     text: 'Save'
+        #     on_release:
+        #         print(self.ids['lbl_txt'])
+
+
+<OptionItem@MDBoxLayout>:
+    label_text: ''
+    label_theme: None
+    italicize: False
+
+    size_hint_y: None
+    height: '48dp'
+    padding: '12dp', '6dp'
+
     MDLabel:
-        text: '*options here*'
-        halign: 'center'
+        size_hint_x: 0.8
+        text: root.label_text
+        theme_text_color: root.label_theme if root.label_theme is not None else 'Primary'
+        italic: root.italicize
 
 
 <Display>:
