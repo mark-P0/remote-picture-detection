@@ -2,9 +2,10 @@ from kivymd.app import MDApp
 
 from kivy.logger import Logger
 from kivy.clock import Clock
-from kivy.properties import ObjectProperty, ListProperty
 from kivy.core.window import Window
-from kivy.utils import get_color_from_hex
+from kivy.utils import platform as KivyPlatform, get_color_from_hex
+
+from kivy.properties import ObjectProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
 import threading
@@ -133,5 +134,16 @@ class ClientUI(MDApp):
 
 if __name__ == '__main__':
     instance = ClientUI()
-    Window.size = (325, 650)
+
+    if KivyPlatform != 'android':
+        Window.size = (325, 650)
+    else:
+        from android.permissions import request_permissions, Permission  # noqa
+        request_permissions([
+            Permission.CAMERA,
+            Permission.INTERNET,
+            Permission.READ_EXTERNAL_STORAGE,
+            Permission.WRITE_EXTERNAL_STORAGE,
+        ])
+
     instance.run()
