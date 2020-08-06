@@ -2,6 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from cgi import parse_header, parse_multipart
 from urllib.parse import parse_qs
 
+import os
 import imghdr
 from datetime import datetime
 
@@ -41,17 +42,21 @@ class CustomHandler(BaseHTTPRequestHandler):
             params['boundary'] = bytes(params['boundary'], 'UTF-8')
         params['CONTENT-LENGTH'] = content_length
 
-        now = datetime.now()
-        filename = now.strftime('%Y%m%d_%H%M%S')
-
         if content_type == 'multipart/form-data':
             parsed = parse_multipart(self.rfile, params)
 
+            received_dir = 'received'
+
+            name = datetime.now().strftime('%Y%m%d_%H%M%S')
             byte_file = parsed['file'][0]
             type_ = imghdr.what(None, h=byte_file)
-            with open(f'received/{type_.upper()}_{filename}.{type_}', 'wb') as new_file:
+
+            full_name = f'{type_.upper()}_{name}.{type_}'
+            full_path = os.path.join(received_dir, f'{full_name}')
+            with open(full_path, 'wb') as new_file:
                 new_file.write(byte_file)
-                print(f'File {filename}.{type_} written.')
+
+                CustomHandler.ui.server_callback('POST', (received_dir, full_name))
 
         elif content_type == 'application/x-www-form-urlencoded':
             # parsed = parse(self.rfile)
@@ -106,10 +111,10 @@ def open_server(ui):
         try:
             IP = get_IP()
 
-            from random import randint
-            PORT = randint(0, 65535)
+            # from random import randint
+            # PORT = randint(0, 65535)
             # PORT = 58029
-            # PORT = 8000
+            PORT = 8000
 
             server_address = (IP, PORT)  # Random port number generated might already be in use lol
             httpd = HTTPServer(server_address, CustomHandler)

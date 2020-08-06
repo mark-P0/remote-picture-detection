@@ -86,8 +86,8 @@ Carousel:
 
 
 <Display>:
-    send_button: send
-    text_field: prompt
+    # send_button: send
+    # text_field: prompt
     indicator: loading
 
     address: app.ip_address
@@ -100,34 +100,41 @@ Carousel:
             # root.manager.current = 'scr1'
 
             root.parent_carousel.load_previous()
-
-    MDBoxLayout:
+    
+    MDIconButton:
         pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-        size_hint_x: 0.8
-        orientation: 'vertical'
-        spacing: '6dp'
+        icon: 'camera'
+        on_release:
+            # print(self.icon)
+            root.send_button_callback()
 
-        adaptive_height: True
-        # md_bg_color: 0, 0, 0, 0.25
+    # MDBoxLayout:
+    #     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    #     size_hint_x: 0.8
+    #     orientation: 'vertical'
+    #     spacing: '6dp'
 
-        MDTextField:
-            id: prompt
-            multiline: True
-            hint_text: 'Message to server'
-            helper_text_mode: 'persistent'
-            helper_text: 'Try sending a message to the live server!'
+    #     adaptive_height: True
+    #     # md_bg_color: 0, 0, 0, 0.25
 
-            on_focus:
-                self.helper_text = ''
+    #     MDTextField:
+    #         id: prompt
+    #         multiline: True
+    #         hint_text: 'Message to server'
+    #         helper_text_mode: 'persistent'
+    #         helper_text: 'Try sending a message to the live server!'
 
-        MDRaisedButton:
-            id: send
-            pos_hint: {'right': 1}
-            # markup: True
-            text: 'Send'
+    #         on_focus:
+    #             self.helper_text = ''
 
-            on_release:
-                root.send_button_callback()
+    #     MDRaisedButton:
+    #         id: send
+    #         pos_hint: {'right': 1}
+    #         # markup: True
+    #         text: 'Send'
+
+    #         on_release:
+    #             root.send_button_callback()
 
     MDSpinner:
         id: loading

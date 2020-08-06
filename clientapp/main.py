@@ -1,7 +1,7 @@
 from kivymd.app import MDApp
 
 from kivy.logger import Logger
-from kivy.clock import Clock
+# from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.utils import platform as KivyPlatform, get_color_from_hex
 
@@ -22,39 +22,42 @@ class Display(Screen):
 
     request_thread: threading.Thread
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        Clock.schedule_once(self.deferred)
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     Clock.schedule_once(self.deferred)
 
-    def deferred(self, *args):
-        self.widget_initializations()
+    # def deferred(self, *args):
+    #     self.widget_initializations()
 
-    def widget_initializations(self):
-        self.send_button.ids['lbl_txt'].font_style = 'Button'
+    # def widget_initializations(self):
+    #     self.send_button.ids['lbl_txt'].font_style = 'Button'
 
     def send_button_callback(self):
         self.indicator.active = True
-        self.text_field.focus = False
+        # self.text_field.focus = False
 
         self.request_thread = threading.Thread(target=self.send_attempt)
         self.request_thread.daemon = True
         self.request_thread.start()
 
     def send_attempt(self, *args):
-        message = self.text_field.text
+        # message = self.text_field.text
 
         try:
             req = post_request(
                 address=f'http://{self.address[0]}:{self.address[1]}',
-                message=message,
+                # message=message,
+                filepath='exclusions/sample.jpg',
             )
 
-            Logger.info('ClientUI: Sending success')
             content = req.content.decode('UTF-8')
-            Clock.schedule_once(lambda *args: self.set_helper(is_success=True, message=content), 0.25)
+            Logger.info(f'ClientUI: Sending success [{content}]')
+            # Clock.schedule_once(lambda *args: self.set_helper(is_success=True, message=content), 0.25)
         except Exception as e:
             Logger.error(f'ClientUI: An exception has occurred. {e}')
-            Clock.schedule_once(lambda dt, e=e: self.set_helper(), 0.25)
+            # Clock.schedule_once(lambda dt, e=e: self.set_helper(), 0.25)
+
+        self.indicator.active = False
 
     def set_helper(self, is_success=False, message=None):  # Putang inang helper color yan ekis kapag success e :(
         if is_success:  # Message successfully sent
@@ -65,7 +68,7 @@ class Display(Screen):
             self.text_field.helper_text = 'Message was not sent.'
             self.text_field._current_error_color = get_color_from_hex('#ff4444')
 
-        self.indicator.active = False
+        # self.indicator.active = False
 
 
 class Options(Screen):
@@ -118,7 +121,7 @@ class Options(Screen):
 
 
 class ClientUI(MDApp):
-    ip_address = ListProperty(['192.168.254.108', '8888'])
+    ip_address = ListProperty(['192.168.254.105', '8000'])
     server = None
 
     # def __init__(self, **kwargs):

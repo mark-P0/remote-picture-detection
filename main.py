@@ -1,7 +1,7 @@
 from kivymd.app import MDApp
 
 from kivy.logger import Logger
-# from kivy.clock import Clock
+from kivy.clock import Clock  # noqa
 from kivy.properties import StringProperty, BooleanProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
@@ -26,11 +26,24 @@ def resource_path(relative_path):
 
 
 class Display(Screen):
+    server_image = StringProperty('images/blank.jpg')
+    client_image = StringProperty('images/blank.jpg')
     received = StringProperty()
+
+    # def __init__(self, **kwargs):
+    #     super().__init__(**kwargs)
+    #     Clock.schedule_once(self.deferred, 3)
+
+    # def deferred(self, *args):
+    #     self.client_image = 'received/JPEG_20200805_164713.jpeg'
 
     def receive_data(self, data):
         Logger.info('ServerUI: Data received by the Screen')
-        self.received = data
+        if os.path.isfile(data):
+            self.client_image = data
+            # self.client_image = 'received/JPEG_20200805_164713.jpeg'
+        else:
+            self.received = data
 
         self.manager.transition.direction = 'left'
         self.manager.current = self.name
@@ -103,6 +116,11 @@ class ServerUI(MDApp):
                 received = data
             elif type(data) == list:
                 received = '\n'.join(data)
+            elif type(data) == tuple:
+                received = '/'.join(data)  # Filepath; I'd use os.path.join() but Kivy does not recognize Windows' style
+            else:
+                Logger.error('ServerUI: Received file is not supported, check ASAP')
+                return
 
             self.root.get_screen('scr2').receive_data(received)
 
