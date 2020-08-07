@@ -5,23 +5,20 @@ from kivy_deps import sdl2, glew
 from kivymd import hooks_path as kivymd_hooks_path
 
 
-path = os.path.abspath('..')
+EXENAME = 'Server UI'
+
+path = os.path.abspath('.')
 
 data_files = [
     ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/images", "images"),
     ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/received", "received"),
-    ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/widgets", "widgets/"),
+    ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/ui", "ui/"),
+    ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/scripts", "scripts/"),
     ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/main.py", "."),
-    ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/serverui.kv", "."),
+    ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/main.kv", "."),
+    ("C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/server.py", "."),
 ]
 
-# --add-data "C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/images;images/"
-# --add-data "C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/received;received/"
-# --add-data "C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/widgets;widgets/"
-# --add-data "C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/main.py;."
-# --add-data "C:/Users/Mark/Documents/__projects/__python_venvs/http-practice/serverui.kv;."
-
-EXENAME = 'Server UI'
 
 a = Analysis(  # noqa
     ['main.py'],

@@ -1,33 +1,24 @@
 from kivymd.app import MDApp
 
 from kivy.logger import Logger
+
+from kivy.lang import Builder
 from kivy.clock import Clock  # noqa
 from kivy.properties import StringProperty, BooleanProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
-import threading
-# from server import run as run_server
-from server import open_server
-# from widgets.options import *
+# from ui.options import *
 
-import sys
 import os
+import threading
+from server import open_server
 
-
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
+from scripts.pyinstaller_absolute_paths import resource_path
 
 
 class Display(Screen):
-    server_image = StringProperty('images/blank.jpg')
-    client_image = StringProperty('images/blank.jpg')
+    server_image = StringProperty(resource_path('images/blank.jpg'))
+    client_image = StringProperty(resource_path('images/blank.jpg'))
     received = StringProperty()
 
     # def __init__(self, **kwargs):
@@ -65,6 +56,9 @@ class ServerUI(MDApp):
 
     # def deferred(self, *args):
     #     pass
+
+    def build(self):
+        return Builder.load_file(resource_path('main.kv'))
 
     def create_server_reference(self):
         server, ip, port = open_server(ui=self)
