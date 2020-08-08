@@ -12,6 +12,7 @@ from kivy.uix.screenmanager import Screen
 import os
 import threading
 from server import open_server
+# from faces import FaceHandler
 
 from scripts.pyinstaller_absolute_paths import resource_path
 
