@@ -1,27 +1,14 @@
 from kivy.logger import Logger
 
 import os
+from scripts.for_pyinstaller import resource_path
 
 Logger.info("FaceHandler: Importing 'face_recognition'. . .")
 import face_recognition  # noqa: E402
 
-# import threading
-
-
-# def threaded_import():
-#     import importlib
-#     global face_recognition
-#     face_recognition = importlib.import_module('face_recognition')
-
-
-# face_recognition = None
-# thread = threading.Thread(target=threaded_import)
-# thread.daemon = True
-# thread.start()
-
 
 class FaceHandler:
-    faces_dir = 'data/local/cropped'
+    faces_dir = resource_path('data/local/cropped')
     filenames = []
     local_encodings = []
     tolerance = 0.4
@@ -43,10 +30,13 @@ class FaceHandler:
 
             path = f'{self.faces_dir}/{image}'
 
+            # print(path)
+            # continue
+
             self.filenames.append(path)
 
             if self.display:
-                self.frills(f"Loading '{path}'. . .")
+                self.frills(f"Loading '{image}'. . .")
 
             Logger.info(f"FaceHandler: Loading '{path}'. . .")
             loaded = face_recognition.load_image_file(path)
@@ -82,7 +72,7 @@ class FaceHandler:
 if __name__ == '__main__':
     instance = FaceHandler()
 
-    for file in os.listdir('data/received/test_images'):
-        print(file)
-        instance.find_match(f'data/received/test_images/{file}')
-        print()
+    # for file in os.listdir('data/received/test_images'):
+    #     print(file)
+    #     instance.find_match(f'data/received/test_images/{file}')
+    #     print()

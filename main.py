@@ -80,9 +80,10 @@ class Display(Screen):
     def deferred_find_match(self, filename):
         matches = self.face_handler.find_match(filename)
         for match in matches:
+            temp_name = match.split('/')[-1]
             item = ResultItem(
                 image_path=match,
-                label_text=match,
+                label_text=temp_name,
             )
             self.ids['results_container'].add_widget(item)
 

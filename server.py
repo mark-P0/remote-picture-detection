@@ -7,6 +7,7 @@ import imghdr
 from datetime import datetime
 
 import threading
+from scripts.for_pyinstaller import resource_path
 
 
 class CustomHandler(BaseHTTPRequestHandler):
@@ -45,7 +46,7 @@ class CustomHandler(BaseHTTPRequestHandler):
         if content_type == 'multipart/form-data':
             parsed = parse_multipart(self.rfile, params)
 
-            received_dir = 'data/received'
+            received_dir = resource_path('data/received')
 
             name = datetime.now().strftime('%Y%m%d_%H%M%S')
             byte_file = parsed['file'][0]
