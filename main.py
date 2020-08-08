@@ -1,9 +1,11 @@
 from kivymd.app import MDApp
+from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.dialog import MDDialog
 
 from kivy.logger import Logger
-
 from kivy.lang import Builder
-from kivy.clock import Clock  # noqa
+
+from kivy.clock import Clock
 from kivy.properties import StringProperty, BooleanProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
@@ -13,10 +15,9 @@ import os
 import threading
 from server import open_server
 
-from scripts.pyinstaller_absolute_paths import resource_path
+from scripts.for_pyinstaller import resource_path
 
-# Logger.info('ServerUI: Importing FaceHandler. . .')
-# from faces import FaceHandler  # noqa: E402
+import importlib
 
 
 class Display(Screen):
@@ -24,23 +25,81 @@ class Display(Screen):
     client_image = StringProperty(resource_path('images/blank.jpg'))
     received = StringProperty()
 
-    # def __init__(self, **kwargs):
-    #     super().__init__(**kwargs)
-    #     Clock.schedule_once(self.deferred, 3)
+    face_handler = None
+    initial_dialog: MDDialog = None
+    local_dialog: MDDialog = None
 
-    # def deferred(self, *args):
-    #     self.client_image = 'received/JPEG_20200805_164713.jpeg'
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Clock.schedule_once(self.deferred)
+
+    def deferred(self, *args):
+        self.initial_dialog = MDDialog(
+            title='Initializing faces',
+            text='If this message has been in display for too long, something unintended has probably happened.',
+            auto_dismiss=False,
+        )
+        self.initial_dialog.open()
+
+        thread = threading.Thread(target=self.initialize_handler)
+        thread.daemon = True
+        Clock.schedule_once(lambda *args: thread.start(), 0.5)
+
+    def initialize_handler(self, *args):
+        faces = importlib.import_module('faces')
+        self.face_handler = faces.FaceHandler(display=self, frills=self.change_dialog_text)
+        self.initial_dialog.dismiss()
+        self.initial_dialog = None
+
+    def change_dialog_text(self, text):
+        self.initial_dialog.text = text
 
     def receive_data(self, data):
+        if self.initial_dialog is not None:
+            return
+
         Logger.info('ServerUI: Data received by the Screen')
         if os.path.isfile(data):
             self.client_image = data
-            # self.client_image = 'received/JPEG_20200805_164713.jpeg'
+
+            self.ids['results_container'].clear_widgets()
+
+            self.local_dialog = MDDialog(
+                title='Looking for a match',
+                text='Please wait. . .'
+            )
+            self.local_dialog.open()
+
+            Clock.schedule_once(lambda *args: self.deferred_find_match(data), 1)
         else:
             self.received = data
 
         self.manager.transition.direction = 'left'
         self.manager.current = self.name
+
+    def deferred_find_match(self, filename):
+        matches = self.face_handler.find_match(filename)
+        for match in matches:
+            item = ResultItem(
+                image_path=match,
+                label_text=match,
+            )
+            self.ids['results_container'].add_widget(item)
+
+        self.local_dialog.dismiss()
+
+
+class ResultItem(MDBoxLayout):
+    image_path = StringProperty()
+    label_text = StringProperty()
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        if 'image_path' in kwargs:
+            self.image_path = kwargs['image_path']
+        if 'label_text' in kwargs:
+            self.label_text = kwargs['label_text']
 
 
 class OptionPanel(Screen):

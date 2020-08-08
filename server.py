@@ -45,7 +45,7 @@ class CustomHandler(BaseHTTPRequestHandler):
         if content_type == 'multipart/form-data':
             parsed = parse_multipart(self.rfile, params)
 
-            received_dir = 'received'
+            received_dir = 'data/received'
 
             name = datetime.now().strftime('%Y%m%d_%H%M%S')
             byte_file = parsed['file'][0]

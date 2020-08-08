@@ -26,7 +26,13 @@ class FaceHandler:
     local_encodings = []
     tolerance = 0.4
 
-    def __init__(self):
+    display = None
+
+    def __init__(self, display=None, frills=None):
+        if display and frills:
+            self.display = display
+            self.frills = frills
+
         self.initialize_local_encodings()
 
     def initialize_local_encodings(self):
@@ -38,6 +44,9 @@ class FaceHandler:
             path = f'{self.faces_dir}/{image}'
 
             self.filenames.append(path)
+
+            if self.display:
+                self.frills(f"Loading '{path}'. . .")
 
             Logger.info(f"FaceHandler: Loading '{path}'. . .")
             loaded = face_recognition.load_image_file(path)
@@ -54,10 +63,20 @@ class FaceHandler:
         #     print(result)
         #     print()
 
-        result = face_recognition.compare_faces(
+        results = face_recognition.compare_faces(
             self.local_encodings, encoding, tolerance=self.tolerance,
         )
-        print(result)
+
+        # print(results)
+        if True not in results:
+            return []
+
+        # for index, result in enumerate(results):
+        #     if result:
+        #         print(self.filenames[index])
+
+        matches = [self.filenames[index] for index, result in enumerate(results) if result]
+        return matches
 
 
 if __name__ == '__main__':

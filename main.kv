@@ -70,25 +70,46 @@ ScreenManager:
 
     MDBoxLayout:
         orientation: 'horizontal'
-        padding: '100dp', '150dp', '100dp', '100dp'
+        # padding: '100dp', '150dp', '100dp', '100dp'
+        padding: '100dp', 0
+
+        # MDBoxLayout:
+        #     orientation: 'vertical'
+        #     padding: '10dp'
+        #     md_bg_color: 1, 0, 0, 0.25
+
+        #     AsyncImage:
+        #         id: server
+        #         source: root.server_image
+
+        #     MDLabel:
+        #         text: '*match pic*'
+        #         halign: 'center'
+
+        ScrollView:
+            canvas.before:
+                Color:
+                    rgba: 0, 0, 0, 0.25
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            MDBoxLayout:
+                id: results_container
+                orientation: 'vertical'
+                padding: '10dp'
+                spacing: '20dp'
+
+                adaptive_height: True
+
+                ResultItem:
+                    image_path: root.server_image
+                    label_text: '*match pic*'
 
         MDBoxLayout:
             orientation: 'vertical'
             padding: '10dp'
-            md_bg_color: 1, 0, 0, 0.25
-
-            AsyncImage:
-                id: server
-                source: root.server_image
-
-            MDLabel:
-                text: '*match pic*'
-                halign: 'center'
-
-        MDBoxLayout:
-            orientation: 'vertical'
-            padding: '10dp'
-            md_bg_color: 0, 0, 1, 0.25
+            # md_bg_color: 0, 0, 1, 0.25
 
             AsyncImage:
                 id: client
@@ -100,4 +121,16 @@ ScreenManager:
                 halign: 'center'
 
 
+<ResultItem>:
+    orientation: 'vertical'
+    adaptive_height: True
 
+    AsyncImage:
+        size_hint_y: None
+        # height: self.texture_size[1]
+        height: '320dp'
+        source: root.image_path
+
+    MDLabel:
+        text: root.label_text
+        halign: 'center'
