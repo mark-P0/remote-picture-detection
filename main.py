@@ -12,9 +12,11 @@ from kivy.uix.screenmanager import Screen
 import os
 import threading
 from server import open_server
-# from faces import FaceHandler
 
 from scripts.pyinstaller_absolute_paths import resource_path
+
+# Logger.info('ServerUI: Importing FaceHandler. . .')
+# from faces import FaceHandler  # noqa: E402
 
 
 class Display(Screen):
@@ -123,8 +125,6 @@ class ServerUI(MDApp):
 if __name__ == '__main__':
     ui_instance = ServerUI()
 
-    # server, ip, port = initialize_server(ui_instance)
-    # ui_instance.set_server_reference(server, ip, port)
     ui_instance.create_server_reference()
 
     ui_instance.run()
