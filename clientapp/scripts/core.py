@@ -13,9 +13,10 @@ def post_request(
     address='http://127.0.0.1:8000',
     message=None,
     filepath=None,
+    to_process=False,
 ):
-    if (message, filepath).count(None) in (0, 2):
-        return 'Invalid parameters'
+    if (message, filepath).count(None) != 1:
+        raise Exception('Invalid POST function parameters')
 
     if message is not None:
         post_data = {

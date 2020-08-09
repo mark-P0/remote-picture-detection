@@ -1,15 +1,21 @@
 from kivymd.app import MDApp
+from kivymd.uix.dialog import MDDialog
 
 from kivy.logger import Logger
-# from kivy.clock import Clock
+from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.utils import platform as KivyPlatform, get_color_from_hex
 
 from kivy.properties import ObjectProperty, ListProperty
 from kivy.uix.screenmanager import Screen
 
+import os
 import threading
-from scripts.core import post_request
+from datetime import datetime
+from scripts.core import get_request, post_request
+
+if KivyPlatform == 'android':
+    from scripts.camera_jvinicius import CameraAndroid
 
 
 class Display(Screen):
@@ -32,22 +38,60 @@ class Display(Screen):
     # def widget_initializations(self):
     #     self.send_button.ids['lbl_txt'].font_style = 'Button'
 
-    def send_button_callback(self):
-        self.indicator.active = True
-        # self.text_field.focus = False
+    def camera_button_callback(self):
+        try:
+            req = get_request(
+                address=f'http://{self.address[0]}:{self.address[1]}',
+            )
 
-        self.request_thread = threading.Thread(target=self.send_attempt)
+            self.open_camera()
+        except Exception as e:
+            Logger.warning(f'ClientUI: Connection to server cannot be achieved [{e}]')
+
+            if KivyPlatform == 'android':
+                dialog = MDDialog(
+                    title='Server cannot be reached',
+                    text=f'This action cannot continue \n\n{e}',
+                    # text='Please try again.',
+                    size_hint=(1, 1),
+                )
+                dialog.open()
+
+    def open_camera(self):
+        # debug_message = 'This should open the camera. . .'
+        debug_image = 'exclusions/sample.jpg'
+
+        if KivyPlatform == 'android':
+            current_datetime = datetime.now()
+            datetime_string = current_datetime.strftime('%Y%m%d_%H%M%S')
+            image_name = f'CLIENT_{datetime_string}_'
+
+            CameraAndroid(image_name).take_picture(
+                on_complete=lambda *args: Clock.schedule_once(lambda *args_: self.camera_callback(*args), 1)
+            )
+        else:
+            # Snackbar(text=debug_message).show()
+            self.camera_callback(debug_image)
+
+    def camera_callback(self, image_dir):
+        file_size = os.stat(image_dir).st_size
+        if file_size == 0:
+            return
+
+        self.indicator.active = True
+
+        self.request_thread = threading.Thread(target=lambda *args: self.send_attempt(image_dir))
         self.request_thread.daemon = True
         self.request_thread.start()
 
-    def send_attempt(self, *args):
+    def send_attempt(self, dir):
         # message = self.text_field.text
 
         try:
             req = post_request(
                 address=f'http://{self.address[0]}:{self.address[1]}',
                 # message=message,
-                filepath='exclusions/sample.jpg',
+                filepath=dir,
             )
 
             content = req.content.decode('UTF-8')

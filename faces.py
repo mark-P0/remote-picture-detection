@@ -11,7 +11,7 @@ class FaceHandler:
     faces_dir = resource_path('data/local/cropped')
     filenames = []
     local_encodings = []
-    tolerance = 0.4
+    tolerance = 0.5
 
     display = None
 

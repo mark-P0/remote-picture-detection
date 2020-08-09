@@ -38,7 +38,9 @@ version = 0.1
 # comma separated e.g. requirements = sqlite3,kivy
 # requirements = python3,kivy
 # requirements = python3==3.7.5, hostpython3==3.7.5, kivy, https://github.com/kivymd/KivyMD/archive/master.zip, plyer, pillow, opencv, numpy, gtts, gtts-token, beautifulsoup4, requests, urllib3, idna, chardet, certifi
-requirements = python3==3.7.5, hostpython3==3.7.5, kivy, https://github.com/kivymd/KivyMD/archive/master.zip, plyer, pillow, requests, urllib3, idna, chardet, certifi
+# requirements = python3==3.7.5, hostpython3==3.7.5, kivy, https://github.com/kivymd/KivyMD/archive/master.zip, plyer, pillow, requests, urllib3, idna, chardet, certifi
+# requirements = python3==3.7.5, hostpython3==3.7.5, kivy, git+https://github.com/HeaTTheatR/KivyMD.git, plyer, pillow, requests, urllib3, idna, chardet, certifi
+requirements = python3==3.7.5, hostpython3==3.7.5, kivy, kivymd, plyer, pillow, requests, urllib3, idna, chardet, certifi
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -87,7 +89,7 @@ fullscreen = 0
 #android.presplash_color = #FFFFFF
 
 # (list) Permissions
-android.permissions = INTERNET
+android.permissions = INTERNET, CAMERA, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE
 
 # (int) Target Android API, should be as high as possible.
 #android.api = 27
@@ -155,6 +157,7 @@ android.permissions = INTERNET
 # (list) Android AAR archives to add (currently works only with sdl2_gradle
 # bootstrap)
 #android.add_aars =
+android.add_aars = ./libraries/support-v4-24.1.1.aar
 
 # (list) Gradle dependencies to add (currently works only with sdl2_gradle
 # bootstrap)
