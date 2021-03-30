@@ -14,7 +14,7 @@ mccabe==0.6.1
 Pillow==7.2.0
 pycodestyle==2.6.0
 pyflakes==2.2.0
-Pygments==2.6.1
+Pygments==2.7.4
 pypiwin32==223
 pywin32==228
 requests==2.24.0
